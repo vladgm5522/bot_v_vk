@@ -1056,6 +1056,7 @@ updates.on('message', async (message) => {
 			yid: users.length,
 			balance: 5000,
 			bank: 0,
+                        LVL_user: 1;
 			btc: 0,
 			farm_btc: 0,
 			farms: 0,
