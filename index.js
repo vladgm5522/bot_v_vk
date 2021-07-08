@@ -2129,6 +2129,102 @@ cmd.hear(/^(?:Транспорт|Транспорты)\s?([0-9]+)?$/i, async (me
 
 //мои команды//
 
+cmd.hear(/^(?:оружие)$/i, async (message, bot) => {
+if(message.user.the_class == 0) {
+return bot(`у вас нет класса`);
+}
+
+
+
+if(message.user.the_class == 1) {
+let text = ``;
+let a = ``;
+let b = ``;
+let c = ``;
+let h = ``;
+if(!message.args[1]) {
+
+
+if(message.user.the_class == 1) text += `🏇Оружие для Война:`;
+if(message.user.LVL_user >= 0) a += `${message.user.stat.weapon_war === 1 ? '🔹' : '🔸'} 1. 🏏Дубинка (1ур.) [+5 к атаке] - 100🌀`;
+if(message.user.LVL_user >= 0) b += `${message.user.stat.weapon_war === 2 ? '🔹' : '🔸'} 2. 🗡Затупившийся меч (1ур.) [+10 к атаке] - 150🌀`;
+if(message.user.LVL_user >= 5) c += `${message.user.stat.weapon_war === 3 ? '🔹' : '🔸'} 3. 🗡Острый меч (5ур.) [+15 к атаке] - 200🌀`;
+
+if(message.user.the_class == 1) h += `Для покупки оружия введите "купить оружие [номер]`; 
+return bot(`${text}\n ${a}\n ${b}\n ${c}\n ${h}\n `);
+}
+}
+
+
+
+if(message.user.the_class == 2) {
+let text = ``;
+let a = ``;
+let b = ``;
+let c = ``;
+let h = ``;
+
+
+
+if(message.user.the_class == 2) text += `🏇Оружие для лучника:`;
+if(message.user.LVL_user >= 0) a += `${message.user.stat.archer_weapon === 1 ? '🔹' : '🔸'} 1. 🏹 Классический лук (1ур.) [+5 к атаке] - 100🌀`;
+if(message.user.LVL_user >= 5) b += `${message.user.stat.archer_weapon === 2 ? '🔹' : '🔸'} 2. 🏹Лук с ядовитымт стрелами (5ур.) [+15 к атаке] - 200🌀 `;
+if(message.user.LVL_user >= 7) c += `${message.user.stat.archer_weapon === 3 ? '🔹' : '🔸'} 3. 🏹Закалённый в боях лук (7ур.) [+20 к атаке] - 250🌀`;
+
+if(message.user.the_class == 2) h += `Для покупки оружия введите "купить оружие [номер]`; 
+return bot(`${text}\n ${a}\n ${b}\n ${c}\n ${h}\n `);
+}
+
+
+
+
+if(message.user.the_class == 3) {
+let text = ``;
+let a = ``;
+let b = ``;
+let c = ``;
+let g = ``;
+let p = ``;
+let h = ``;
+
+
+
+if(message.user.the_class == 3) text += `🏇Оружие для мага:`;
+if(message.user.LVL_user >= 0) a += `${message.user.stat.mage_weapon === 1 ? '🔹' : '🔸'} 1. 🥍Посох новичка (1ур.) [+10 к атаке]+ - 100🌀`;
+if(message.user.LVL_user >= 0) b += `${message.user.stat.mage_weapon === 2 ? '🔹' : '🔸'} 2. 🥍Посох контроля магии (1ур.) [+15 к атаке]+[2 магии] - 200🌀`;
+if(message.user.LVL_user >= 5) c += `${message.user.stat.mage_weapon === 3 ? '🔹' : '🔸'} 3. 🥍Магический посох (5ур.) [+20 к атаке]+[4 магии стихии] - 300🌀`;
+if(message.user.LVL_user >= 10) g += `${message.user.stat.mage_weapon === 4 ? '🔹' : '🔸'} 4. 🥍Магический посох 6 стихий (10ур.) [+20 к атаке]+[6 магии стихии] - 300🌀`;
+if(message.user.LVL_user >= 15) p += `${message.user.stat.mage_weapon === 5 ? '🔹' : '🔸'} 5. 🥍Магический посох всех стихий (15ур.) [+20 к атаке]+[11 магии стихии] - 300🌀`;
+if(message.user.the_class == 3) h += `Для покупки оружия введите "купить оружие [номер]`; 
+return bot(`${text}\n ${a}\n ${b}\n ${c}\n ${g}\n ${p}\n ${h}\n `);
+}
+
+
+
+
+if(message.user.the_class == 4) {
+let text = ``;
+let a = ``;
+let b = ``;
+let c = ``;
+let h = ``;
+let g = ``;
+
+
+if(message.user.the_class == 4) text += `🏇Оружие для охотника:`;
+if(message.user.LVL_user >= 0) a += `${message.user.stat.hunter_weapon === 1 ? '🔹' : '🔸'} 1. 🔪Топор (1ур.) [+5 к атаке] - 50🌀`;
+if(message.user.LVL_user >= 0) b += `${message.user.stat.hunter_weapon === 2 ? '🔹' : '🔸'} 2. 🗡Кинжалы (1ур.) [+10 к атаке] - 100🌀 `;
+if(message.user.LVL_user >= 0) c += `${message.user.stat.hunter_weapon === 3 ? '🔹' : '🔸'} 3. 🏹Лук (5ур.) [+15 к атаке] - 100🌀 `;
+if(message.user.LVL_user >= 0) g += `${message.user.stat.hunter_weapon === 3 ? '🔹' : '🔸'} 3. 🏹Лук (10ур.) [+20 к атаке] - 100🌀 `;
+
+if(message.user.the_class == 4) h += `Для покупки оружия введите "Оружие [номер]`; 
+return bot(`${text}\n ${a}\n ${b}\n ${c}\n ${h}\n `);
+}
+
+
+
+});
+
 
 
 cmd.hear(/^(?:stop)$/i, async (message, bot) => {
