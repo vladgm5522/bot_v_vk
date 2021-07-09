@@ -97,38 +97,45 @@ const horse = [
 	},
 	{
 		name: 'Зебра',
-		cost: 500,
+		cost: 50,
+		
 		id: 1
 	},
 	{
 		name: 'Лошадь',
-		cost: 2500,
+		cost: 50,
+		
 		id: 2
 	},
 	{
 		name: 'Единорог',
-		cost: 5000,
+		cost: 150,
+		
 		id: 3
 	},
 	{
 		name: 'Олень',
-		cost: 7500,
+		cost: 150,
+		
 		id: 4
 	},
 	{
 		name: 'Волк',
-		cost: 25000,
+		cost: 200,
+		
 		id: 5
 	},
 	{
 		name: 'Лев',
-		cost: 50000,
+		cost: 200,
+		
 		id: 6
 	},
 	{
 		name: 'Тигр',
-		cost: 50000,
-		id: 6
+		cost: 200,
+		
+		id: 7
 	}
 ];
 
@@ -188,22 +195,26 @@ const helmet = [
 	},
 	{
 		name: 'Амулет защиты',
-		cost: 2,
+		cost: 50,
+		protection: +5,
 		id: 1
 	},
 	{
 		name: 'Амулет защиты',
-		cost: 300000,
+		cost: 150,
+		protection: +10,
 		id: 2
 	},
 	{
 		name: 'Амулет здоровья',
-		cost: 450000,
+		cost: 50,
+		health: 5,
 		id: 3
 	},
 	{
 		name: 'Амулет здоровья',
-		cost: 1300000,
+		cost: 150,
+		health: +10,
 		id: 4
 	}
 ];
@@ -1087,6 +1098,7 @@ updates.on('message', async (message) => {
 				krik: false,
 				mine: false,
 				tower: false,
+				amulet: false,
 			},
 			tag: user_info.first_name,
 			work: 0,
@@ -2011,7 +2023,7 @@ cmd.hear(/^(?:продать)\s(.*)\s?(.*)?$/i, async (message, bot) => {
 		return bot(`вы продали свою Колесницу за ${utils.sp(a)}$`);
 	}
 
-	if(/Лодку:)т/i.test(message.args[1].toLowerCase()))
+	if(/Лодку/i.test(message.args[1].toLowerCase()))
 	{
 		if(!message.user.transport.boat) return bot(`у вас нет Лодки`);
 		let a = Math.floor(boat[message.user.transport.boat - 1].cost * 0.85);
@@ -2022,12 +2034,12 @@ cmd.hear(/^(?:продать)\s(.*)\s?(.*)?$/i, async (message, bot) => {
 		return bot(`вы продали свой Лодку за ${utils.sp(a)}$`);
 	}
 
-	if(/Амулет)т/i.test(message.args[1].toLowerCase()))
+	if(/Амулет/i.test(message.args[1].toLowerCase()))
 	{
 		if(!message.user.armor.helmet) return bot(`у вас нет Амулета`);
 		let a = Math.floor(helmet[message.user.armor.helmet - 1].cost * 0.85);
 
-		message.user.balance += Math.floor(helmet[message.user.armor.helmet - 1].cost * 0.85);
+		message.user.balance += a;
 		message.user.armor.helmet = 0;
 
 		return bot(`вы продали свой Амулет за ${utils.sp(a)}$`);
@@ -2082,9 +2094,8 @@ cmd.hear(/^(?:продать)\s(.*)\s?(.*)?$/i, async (message, bot) => {
 		if(message.user.food == 0) return bot(`у вас нет еды`);
 		if(options.count > message.user.food) return bot(`у вас нет столько еды`);
 		if(options.count <= 0) return bot(`вы не можете продать столько еды`);
-		let a = Math.floor(farms[message.user.misc.food - 1].cost * options.count * 0.85);
+		
 
-		message.user.balance += a;
 		message.user.food -= options.count;
 		if(message.user.food == 0) message.user.misc.food = 0;
 
@@ -2430,22 +2441,26 @@ return bot(`Для вступление введите "класс [номер 4
 
 cmd.hear(/^(?:съесть еду|сьесть еду|еда сьесть|еда съесть)/i, async (message, bot) => { 
 
-if(message.user.food == 1);
- message.user.items.food = 0
- message.user.items.health += 5
-
-if(message.user.food == 2);
- message.user.items.food = 0
- message.user.items.health += 10
-
-if(message.user.food == 3);
- message.user.items.food = 0
- message.user.items.health += 20
-
-if(message.user.food == 4);
- message.user.items.food = 0
- message.user.items.health += 30
-
+if(message.user.food == 1)
+{
+ message.user.items.food = 0;
+ message.user.items.health += 5;
+}
+if(message.user.food == 2)
+{
+ message.user.items.food = 0;
+ message.user.items.health += 10;
+}
+if(message.user.food == 3)
+{
+ message.user.items.food = 0;
+ message.user.items.health += 20;
+}
+if(message.user.food == 4)
+{
+ message.user.items.food = 0;
+ message.user.items.health += 30;
+}
 return bot(`вы съели свою еду`) 
 return bot(`Для покупки еды напишите "еда [номер]"`); 
 
@@ -2644,17 +2659,83 @@ ${message.user.armor.helmet === 4 ? '🔹' : '🔸'} 4. Амулет здоро�
 
 	const sell = helmet.find(x=> x.id === Number(message.args[1]));
 	if(!sell) return;
-	if(message.user.armor.helmet) return bot(`у вас уже есть Амулет (${chestplate[message.user.armor.helmet - 1].name}), введите "Продать Амулет"`);
+	if(message.user.timers.amulet) return bot(`вы сможете купить амулет через 24 часа`);
+	if(message.user.armor.helmet) return bot(`у вас уже есть Амулет (${helmet[message.user.armor.helmet - 0].name}), введите "Продать Амулет"`);
 
 	if(message.user.balance < sell.cost) return bot(`недостаточно денег`);
+	
 	else if(message.user.balance >= sell.cost)
 	{
 		message.user.balance -= sell.cost;
 		message.user.armor.helmet = sell.id;
-
-		return bot(`вы купили "${sell.name}" за ${utils.sp(sell.cost)}$`);
+		message.user.timers.amulet = true;
 	}
+
+if(message.user.armor.helmet == 1)
+{
+	message.user.items.health += 5;
+	message.user.timers.amulet = true;
+};
+
+if(message.user.armor.helmet == 2)
+{
+	message.user.items.health += 10;
+	message.user.timers.amulet = true;
+};
+
+if(message.user.armor.helmet == 3)
+{
+	message.user.items.protection += 5;
+	message.user.timers.amulet = true;
+};
+
+if(message.user.armor.helmet == 4) 
+{
+	message.user.items.protection += 10;
+	message.user.timers.amulet = true;
+};	
+	
+
+return bot(`вы купили "${sell.name}" за ${utils.sp(sell.cost)}$`);	
 });
+
+
+//активация амулетов
+
+cmd.hear(/^(?:активировать амулет)/i, async (message, bot) => { 
+
+if(message.user.armor.helmet == 1)
+{
+	message.user.armor.helmet = 0;
+	message.user.items.health += 5;
+};
+
+if(message.user.armor.helmet == 2)
+{
+	message.user.armor.helmet = 0;
+	message.user.items.health += 10;
+};
+
+if(message.user.armor.helmet == 3)
+{
+	message.user.armor.helmet = 0;
+	message.user.items.protection += 5;
+};
+
+if(message.user.armor.helmet == 4) 
+{
+	message.user.armor.helmet = 0;
+	message.user.items.protection += 10;
+};
+
+return bot(`вы активировали амулет`)
+
+});
+
+//активация амулетов
+
+
+
 
 cmd.hear(/^(?:Кираса|Кирасы)\s?([0-9]+)?$/i, async (message, bot) => {
 	if(!message.args[1]) return bot(`🛡Броня:\n 🧥Кирасы:
