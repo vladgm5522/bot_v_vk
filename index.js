@@ -1056,8 +1056,8 @@ updates.on('message', async (message) => {
 			yid: users.length,
 			balance: 5000,
 			bank: 0,
-                        LVL_user: 1;
 			btc: 0,
+			LVL_user: 1,
 			farm_btc: 0,
 			farms: 0,
 			farmslimit: 200,
@@ -1070,7 +1070,7 @@ updates.on('message', async (message) => {
 			bizlvl: 0,
 			nicklimit: 16,
 			rating: 0,
-			regDate: `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`,
+			regDate: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
 			mention: true,
 			ban: false,
 			pp: 0,
@@ -1097,6 +1097,12 @@ updates.on('message', async (message) => {
 			levelt: 0,
 			referal: null,
 			promo: false,
+			stat: {
+				weapon_war: 0,
+				archer_weapon: 0,
+				mage_weapon: 0,
+				hunter_weapon: 0,
+			},
 			items: {
 				health: 0,
 				food: 0,
@@ -1157,14 +1163,112 @@ updates.on('message', async (message) => {
 	if(message.user.settings.firstmsg)
 	{
 
-bot(`123`,);
-		message.user.settings.firstmsg = false;
+bot(`классы:
+${message.user.the_class === 1 ? '🔹' : '🔸'} 1. Воин
+${message.user.the_class === 2 ? '🔹' : '🔸'} 2. Лучник
+${message.user.the_class === 3 ? '🔹' : '🔸'} 3. Маг
+${message.user.the_class === 4 ? '🔹' : '🔸'} 4. Охотник
+
+Для вступление введите "класс [номер]"
+`,) 
+ 
+        message.user.settings.firstmsg = false;
 
 
 		saveUsers();
 		return;
+		
+		
+		{
+			keyboard:JSON.stringify(
+		{
+			"one_time": true,
+			"buttons": [
+			[{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"1\"}",
+				"label": "Воин"
+		},
+			"color": "default"
+		},
+		{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"2\"}",
+				"label": "Лучник"
+		},
+			"color": "positive"
+		},
+		{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"3\"}",
+				"label": "Маг"
+		},
+			"color": "positive"
+		},
+			{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"4\"}",
+				"label": "Охотник"
+			},
+				"color": "negative"
+			}]
+		]
+			
+		})
+    }
+};
 
+	//для война//
+	if(message.user.the_class == 1)
+	{ 
+message.user.stat.health = 150 
+message.user.stat.protection = 250
+message.user.stat.mana = 0 
+message.user.stat.stamina = 150 
+message.user.stat.attack = 20 
+message.user.stat.magic_attack = 0 
 	}
+	
+	
+	//для лучника//
+	if(message.user.the_class == 2)
+	{
+message.user.stat.health = 150
+message.user.stat.protection = 200 
+message.user.stat.mana = 50
+message.user.stat.stamina = 100 
+message.user.stat.attack = 15 
+message.user.stat.magic_attack = 15 
+	}
+	
+	
+	//для мага//
+	if(message.user.the_class == 3)
+	{ 
+message.user.stat.health = 150 
+message.user.stat.protection = 50
+message.user.stat.mana = 200
+message.user.stat.stamina = 100 
+message.user.stat.attack = 10 
+message.user.stat.magic_attack = 20
+	}
+	
+	
+	//для охотника//
+	if(message.user.the_class == 4)
+	{
+message.user.stat.health = 200
+message.user.stat.protection = 200
+message.user.stat.mana = 0 
+message.user.stat.stamina = 150 
+message.user.stat.attack = 10 
+message.user.stat.magic_attack = 0 
+	}
+
 
 	if(!command)
 	{
@@ -2130,10 +2234,15 @@ cmd.hear(/^(?:Транспорт|Транспорты)\s?([0-9]+)?$/i, async (me
 
 //мои команды//
 
+
+
+
+
+
 cmd.hear(/^(?:оружие)$/i, async (message, bot) => {
 if(message.user.the_class == 0) {
-return bot(`у вас нет класса`);
-}
+	return bot(`у вас нет класса`);
+	}
 
 
 
@@ -2223,8 +2332,44 @@ return bot(`${text}\n ${a}\n ${b}\n ${c}\n ${h}\n `);
 }
 
 
+const sell = weapon_war.find(x=> x.id === Number(message.args[1])); 
+if(!sell) return; 
+if(sell.lvl > message.user.lvl_user) return;
+if(message.user.stat.weapon_war) return bot(`у вас уже есть оружие (${weapon_war[message.user.stat.weapon_war - 1].name}), введите "Продать оружие"`); 
+
+if(message.args[1] == 0) return bot(`незя`); 
+
+if(message.user.balance < sell.cost) return bot(`недостаточно денег`); 
+else if(message.user.balance >= sell.cost) 
+{ 
+message.user.balance -= sell.cost; 
+message.user.stat.weapon_war = sell.id; 
+
+return bot(`вы купили "${sell.name}" за ${utils.sp(sell.cost)}$`); 
+} 
+
+
+
+
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2263,8 +2408,76 @@ cmd.hear(/^(?:выйти из класса)$/i, async (message, bot) => {
 	
 });
 	
+cmd.hear(/^(?:классы)$/i, async (message, bot) => {
+	if(message.user.keyboard == false) {
+	await message.reply(`классы:
+${message.user.the_class === 1 ? '🔹' : '🔸'} 1. Воин
+${message.user.the_class === 2 ? '🔹' : '🔸'} 2. Лучник
+${message.user.the_class === 3 ? '🔹' : '🔸'} 3. Маг
+${message.user.the_class === 4 ? '🔹' : '🔸'} 4. Охотник
+
+Для вступление введите "класс [номер]"
+`);
+}
+if(message.user.keyboard == true) {
+	await message.reply(`классы:
+${message.user.the_class === 1 ? '🔹' : '🔸'} 1. Воин
+${message.user.the_class === 2 ? '🔹' : '🔸'} 2. Лучник
+${message.user.the_class === 3 ? '🔹' : '🔸'} 3. Маг
+${message.user.the_class === 4 ? '🔹' : '🔸'} 4. Охотник
+
+Для вступление введите "класс [номер]"
+`, 
+		{
+			keyboard:JSON.stringify(
+		{
+			"one_time": true,
+			"buttons": [
+			[{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"1\"}",
+				"label": "класс 1"
+		},
+			"color": "default"
+		},
+		{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"2\"}",
+				"label": "класс 2"
+		},
+			"color": "positive"
+		},
+		{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"3\"}",
+				"label": "класс 3"
+		},
+			"color": "positive"
+		},
+			{
+				"action": {
+				"type": "text",
+				"payload": "{\"button\": \"4\"}",
+				"label": "класс 4"
+			},
+				"color": "negative"
+			}]
+		]
+			})
+		});
+		}}
+);	
+	
+	
+	
 	
 cmd.hear(/^(?:классы|класс)\s?([0-9]+)?$/i, async (message, bot) => {
+		if(message.user.the_class) return bot(`вы уже выбрали класс`);
+    
+	
 	if(!message.args[1]) return bot(`классы:
 ${message.user.the_class === 1 ? '🔹' : '🔸'} 1. Воин
 ${message.user.the_class === 2 ? '🔹' : '🔸'} 2. Лучник
@@ -2278,55 +2491,13 @@ ${message.user.the_class === 4 ? '🔹' : '🔸'} 4. Охотник
 	if(message.user.the_class) return bot(`вы уже состоите в классе (${the_class[message.user.the_class - 0].name})`);
     if(message.args[1] == 0) return bot(`незя`);
 	
-
-	
-	if(message.user.the_class == 1); 
-	message.user.items.protection = 250
-	message.user.items.health = 150
-	message.user.items.mana = 0
-	message.user.items.stamina = 150
-	message.user.items.attack = 20 
-	message.user.items.magic_attack = 0
-	
-	
-	
-	
-	if(message.user.the_class == 2); 
-	message.user.items.protection = 300
-	message.user.items.health = 150
-	message.user.items.mana = 50
-	message.user.items.stamina = 100
-	message.user.items.attack = 15 
-	message.user.items.magic_attack = 15
-	
-	
-	
-	if(message.user.the_class == 3); 
-	message.user.items.protection = 50
-	message.user.items.health = 150
-	message.user.items.mana = 200
-	message.user.items.stamina = 100
-	message.user.items.attack = 10
-	message.user.items.magic_attack = 20
-	
-	
-	if(message.user.the_class == 4); 
-	message.user.items.protection = 200
-	message.user.items.health = 200
-	message.user.items.mana = 0
-	message.user.items.stamina = 150
-	message.user.items.attack = 10
-	message.user.items.magic_attack = 0
-	
-	
-	
-	
 	{
 		message.user.the_class -= sell.cost;
 		message.user.the_class = sell.id;
 
 		return bot(`вы теперь (${sell.name})`);
 	}
+	
 });		
 	
 
@@ -2376,19 +2547,19 @@ return bot(`Для вступление введите "класс [номер 4
 cmd.hear(/^(?:съесть еду|сьесть еду|еда сьесть|еда съесть)/i, async (message, bot) => { 
 
 if(message.user.food == 1);
- message.user.items.food = 0
+ message.user.items.food -= 1
  message.user.items.health += 5
 
 if(message.user.food == 2);
- message.user.items.food = 0
+ message.user.items.food -= 1
  message.user.items.health += 10
 
 if(message.user.food == 3);
- message.user.items.food = 0
+ message.user.items.food -= 1
  message.user.items.health += 20
 
 if(message.user.food == 4);
- message.user.items.food = 0
+ message.user.items.food -= 1
  message.user.items.health += 30
 
 return bot(`вы съели свою еду`) 
