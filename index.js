@@ -2492,13 +2492,13 @@ ${message.user.the_class === 4 ? '🔹' : '🔸'} 4. Охотник
     if(message.args[1] == 0) return bot(`незя`);
 	
 	{
-		message.user.the_class -= sell.cost;
+		
 		message.user.the_class = sell.id;
 
 		return bot(`вы теперь (${sell.name})`);
 	}
 	
-});		
+});			
 	
 
 
