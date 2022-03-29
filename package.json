@@ -9,6 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "proxy": "http://localhost:8000"
   "dependencies": {
     "express": "^4.17.1",
     "prequest": "^1.0.0",
